@@ -1,6 +1,3 @@
-/target/*
-!/target/objects
-/target/objects/*
-!/target/objects/.gitkeep
+/target/
 /input.txt
 .idea/
