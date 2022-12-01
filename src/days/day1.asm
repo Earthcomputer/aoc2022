@@ -79,15 +79,11 @@ ret
 triple_compare:
 cmp r11, r10
 jle triple_compare_fail1
-xor r10, r11
-xor r11, r10
-xor r10, r11
+xchg r10, r11
     triple_compare_fail1:
 cmp r11, r13
 jle triple_compare_fail2
-xor r13, r11
-xor r11, r13
-xor r13, r11
+xchg r13, r11
     triple_compare_fail2:
 cmp r11, r14
 jle triple_compare_fail3
