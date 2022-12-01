@@ -108,7 +108,7 @@ jne alloc_end
 mov rax, 19
 mov rbx, alloc_failure_msg
 call print
-jmp _end
+call _end
     alloc_end:
 ret
 
@@ -129,7 +129,7 @@ je free_end
 mov rax, 21
 mov rbx, free_failure_msg
 call print
-jmp _end
+call _end
     free_end:
 ret
 

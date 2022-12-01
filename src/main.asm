@@ -1,4 +1,5 @@
 global _start
+global _end
 
 extern alloc
 extern free

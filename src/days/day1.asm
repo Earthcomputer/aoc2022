@@ -43,7 +43,7 @@ cmp rax, 0
 je day1_valid_number
 mov rax, 15
 mov rbx, invalid_number_msg
-jmp _end
+call _end
     day1_valid_number:
 add r11, rbx
 jmp day1_loop_inc
