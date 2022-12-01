@@ -74,21 +74,25 @@ ret
 ;  r10: first value
 ;  r13: second value
 ;  r14: third value
+; side effects
+;  clobbers r11
 triple_compare:
 cmp r11, r10
 jle triple_compare_fail1
-mov r10, r11
-jmp triple_compare_end
+xor r10, r11
+xor r11, r10
+xor r10, r11
     triple_compare_fail1:
 cmp r11, r13
 jle triple_compare_fail2
-mov r13, r11
-jmp triple_compare_end
+xor r13, r11
+xor r11, r13
+xor r13, r11
     triple_compare_fail2:
 cmp r11, r14
-jle triple_compare_end
+jle triple_compare_fail3
 mov r14, r11
-    triple_compare_end:
+    triple_compare_fail3:
 ret
 
 section .data
