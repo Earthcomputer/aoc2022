@@ -1,7 +1,10 @@
+global c_str_length
 global parse_int
 global str_append
 global str_concat
+global str_equal
 global str_split
+global str_to_owned
 global to_string
 
 extern alloc
@@ -179,6 +182,34 @@ pop rbp
 ret
 
 ; inputs
+;  rax: length
+;  rbx: string
+; outputs
+;  rax: owned string
+; side effects
+;  clobbers rbx, rcx, rsi, rdi, rdx, r10, r8, r9
+str_to_owned:
+push rbp
+mov rbp, rsp
+sub rsp, 24
+mov qword [rbp-8], rax
+mov qword [rbp-16], rbx
+call alloc
+mov rbx, qword [rbp-8]
+mov rcx, qword [rbp-16]
+
+    str_to_owned_loop:
+sub rbx, 1
+jc str_to_owned_end
+mov dl, byte [rcx+rbx]
+mov byte [rax+rbx], dl
+jmp str_to_owned_loop
+    str_to_owned_end:
+mov rsp, rbp
+pop rbp
+ret
+
+; inputs
 ;  rax: length of string
 ;  rbx: string to split
 ;  cl: character to split on
@@ -253,4 +284,54 @@ mov rax, qword [rbp-32]
 
 mov rsp, rbp
 pop rbp
+ret
+
+; inputs
+;  rax: length 1
+;  rbx: string 1
+;  rcx: length 2
+;  rdx: string 2
+; outputs
+;  rax: 1 if equal, 0 otherwise
+; side effects
+;  clobbers rcx
+str_equal:
+cmp rax, rcx
+je str_equal_loop
+xor rax, rax
+jmp str_equal_end
+
+    str_equal_loop:
+sub rax, 1
+jc str_equal_pass
+mov cl, byte [rbx+rax]
+cmp byte [rdx+rax], cl
+je str_equal_loop
+
+xor rax, rax
+jmp str_equal_end
+
+    str_equal_pass:
+mov rax, 1
+
+    str_equal_end:
+ret
+
+; inputs
+;  rax: the null-terminated string
+; outputs
+;  rax: the length of the string, not including the null terminator
+; side effects
+;  clobbers rbx
+c_str_length:
+mov rbx, rax ; start pointer
+jmp c_str_length_loop_cond
+
+    c_str_length_loop:
+add rax, 1
+    c_str_length_loop_cond:
+cmp byte [rax], 0
+jne c_str_length_loop
+
+sub rax, rbx
 ret

@@ -9,4 +9,4 @@ done
 
 ld $(find target/objects -name '*.o') -o target/aoc2022
 
-target/aoc2022
+target/aoc2022 $@

@@ -2,12 +2,17 @@ global _start
 global _end
 
 extern alloc
+extern c_str_length
+extern day_in_month_and_hours_in_day
 extern free
 extern input
 extern parse_int
 extern print
+extern seconds_since_epoch
 extern str_append
 extern str_concat
+extern str_equal
+extern str_to_owned
 extern to_string
 
 extern day1_1
@@ -18,9 +23,69 @@ extern day2_2
 section .text
 
 _start:
+mov rsi, [rsp]
+sub rsi, 1
+jc _start_args_end
+    _start_args_loop:
+sub rsi, 1
+jc _start_args_end
+mov rax, qword [rsp+16+8*rsi]
+call c_str_length
+mov rbx, qword [rsp+16+8*rsi]
+mov rcx, 10
+mov rdx, defaults_arg
+call str_equal
+cmp rax, 0
+je _start_args_loop
+mov byte [defaults], 1
+
+    _start_args_end:
 mov rbp, rsp
 sub rsp, 64
 
+cmp byte [defaults], 0
+je _start_manual_day_input
+
+call seconds_since_epoch
+call day_in_month_and_hours_in_day
+cmp rbx, 5
+jl _start_before_5am
+add rax, 1
+    _start_before_5am:
+cmp rax, 1
+jl _start_show_manual_reason
+cmp rax, 25
+jg _start_show_manual_reason
+mov rbx, rax
+jmp _start_day_msg_success
+
+    _start_show_manual_reason:
+call to_string
+mov r11, rax
+mov r12, rbx
+mov rax, 51
+mov rbx, day_manual_reason_msg
+call str_to_owned
+mov rbx, rax
+mov rax, 51
+mov rcx, 51
+mov rdx, r11
+mov rsi, r12
+call str_concat
+mov rdx, 10
+call str_append
+mov r13, rbx
+mov r14, rcx
+call print
+mov rax, r12
+mov rbx, r11
+call free
+mov rax, r13
+mov rbx, r14
+call free
+
+
+    _start_manual_day_input:
 mov rax, 32
 mov rbx, day_number_msg
 call print
@@ -65,6 +130,11 @@ jmp _end
     _start_part_msg_success:
 mov qword [rbp-16], rbx
 
+cmp byte [defaults], 0
+je _start_ask_input_file
+mov rbx, input_txt_null
+jmp _start_end_ask_input_file
+    _start_ask_input_file:
 mov rax, 22
 mov rbx, input_file_msg
 call print
@@ -72,6 +142,7 @@ call input
 mov rcx, rax
 xor rdx, rdx
 call str_append
+    _start_end_ask_input_file:
 
 mov rax, 2 ; open
 mov rdi, rbx
@@ -149,11 +220,17 @@ syscall
 
 section .data
 
+defaults_arg:
+db "--defaults"
+
 day_number_msg:
 db "Enter the day number (1 to 25): "
 
 part_msg:
 db "Enter the day part (1 or 2): "
+
+day_manual_reason_msg:
+db "Cannot auto-select day, because it would have been "
 
 input_file_msg:
 db "Enter the input file: "
@@ -170,6 +247,11 @@ db "Failed to open file", 10
 day_unimplemented_msg:
 db "That function has not been implemented yet", 10
 
+defaults:
+db 0
+
+input_txt_null:
+db "input.txt", 0
 
 days_table:
 dq day1_1
