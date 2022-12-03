@@ -43,6 +43,7 @@ cmp rax, 0
 je .valid_number
 mov rax, 15
 mov rbx, invalid_number_msg
+call print
 call exit
     .valid_number:
 add r11, rbx
