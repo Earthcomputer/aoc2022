@@ -25,49 +25,49 @@ call str_split
 
 xor rdi, rdi ; total
 
-    loop:
+    .loop:
 sub rax, 1
-jc loop_end
+jc .loop_end
 mov rcx, qword [rbx]
 cmp rcx, 0
-je loop_inc
+je .loop_inc
 cmp rcx, 3
-je input_valid
-    input_invalid:
+je .input_valid
+    .input_invalid:
 mov rax, 21
 mov rbx, invalid_input_msg
 call print
 call _end
-    input_valid:
+    .input_valid:
 mov rcx, qword [rbx+8]
 xor rdx, rdx
 mov dl, byte [rcx]
 sub rdx, 'A'
 cmp rdx, 0
-jl input_invalid
+jl .input_invalid
 cmp rdx, 2
-jg input_invalid
+jg .input_invalid
 xor rsi, rsi
 mov sil, byte [rcx+2]
 sub rsi, 'X'
 cmp rsi, 0
-jl input_invalid
+jl .input_invalid
 cmp rsi, 2
-jg input_invalid
+jg .input_invalid
 imul rdx, 3
 add rdx, rsi
 cmp r10, 0
-jne pt2
+jne .pt2
 mov sil, byte [pt1_win_data+rdx]
-jmp pt_end
-    pt2:
+jmp .pt_end
+    .pt2:
 mov sil, byte [pt2_win_data+rdx]
-    pt_end:
+    .pt_end:
 add rdi, rsi
-    loop_inc:
+    .loop_inc:
 add rbx, 16
-jmp loop
-    loop_end:
+jmp .loop
+    .loop_end:
 
 mov rax, rdi
 call to_string

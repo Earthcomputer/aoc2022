@@ -27,10 +27,10 @@ section .text
 _start:
 mov rsi, [rsp]
 sub rsi, 1
-jc _start_args_end
-    _start_args_loop:
+jc .args_end
+    .args_loop:
 sub rsi, 1
-jc _start_args_end
+jc .args_end
 mov rax, qword [rsp+16+8*rsi]
 call c_str_length
 mov rbx, qword [rsp+16+8*rsi]
@@ -38,30 +38,30 @@ mov rcx, 10
 mov rdx, defaults_arg
 call str_equal
 cmp rax, 0
-je _start_args_loop
+je .args_loop
 mov byte [defaults], 1
 
-    _start_args_end:
+    .args_end:
 mov rbp, rsp
 sub rsp, 64
 
 cmp byte [defaults], 0
-je _start_manual_day_input
+je .manual_day_input
 
 call seconds_since_epoch
 call day_in_month_and_hours_in_day
 cmp rbx, 5
-jl _start_before_5am
+jl .before_5am
 add rax, 1
-    _start_before_5am:
+    .before_5am:
 cmp rax, 1
-jl _start_show_manual_reason
+jl .show_manual_reason
 cmp rax, 25
-jg _start_show_manual_reason
+jg .show_manual_reason
 mov rbx, rax
-jmp _start_day_msg_success
+jmp .day_msg_success
 
-    _start_show_manual_reason:
+    .show_manual_reason:
 call to_string
 mov r11, rax
 mov r12, rbx
@@ -87,7 +87,7 @@ mov rbx, r14
 call free
 
 
-    _start_manual_day_input:
+    .manual_day_input:
 mov rax, 32
 mov rbx, day_number_msg
 call print
@@ -95,20 +95,20 @@ call print
 call input
 call parse_int
 cmp rax, 0
-jne _start_day_msg_error
+jne .day_msg_error
 cmp rbx, 1
-jl _start_day_msg_error
+jl .day_msg_error
 cmp rbx, 25
-jg _start_day_msg_error
-jmp _start_day_msg_success
+jg .day_msg_error
+jmp .day_msg_success
 
-    _start_day_msg_error:
+    .day_msg_error:
 mov rax, 12
 mov rbx, invalid_day_msg
 call print
 jmp _end
 
-    _start_day_msg_success:
+    .day_msg_success:
 mov qword [rbp-8], rbx
 mov rax, 29
 mov rbx, part_msg
@@ -117,26 +117,26 @@ call print
 call input
 call parse_int
 cmp rax, 0
-jne _start_part_msg_error
+jne .part_msg_error
 cmp rbx, 1
-je _start_part_msg_success
+je .part_msg_success
 cmp rbx, 2
-je _start_part_msg_success
+je .part_msg_success
 
-    _start_part_msg_error:
+    .part_msg_error:
 mov rax, 20
 mov rbx, invalid_part_msg
 call print
 jmp _end
 
-    _start_part_msg_success:
+    .part_msg_success:
 mov qword [rbp-16], rbx
 
 cmp byte [defaults], 0
-je _start_ask_input_file
+je .ask_input_file
 mov rbx, input_txt_null
-jmp _start_end_ask_input_file
-    _start_ask_input_file:
+jmp .end_ask_input_file
+    .ask_input_file:
 mov rax, 22
 mov rbx, input_file_msg
 call print
@@ -144,7 +144,7 @@ call input
 mov rcx, rax
 xor rdx, rdx
 call str_append
-    _start_end_ask_input_file:
+    .end_ask_input_file:
 
 mov rax, 2 ; open
 mov rdi, rbx
@@ -152,14 +152,14 @@ xor rsi, rsi ; O_RDONLY
 xor rdx, rdx ; mode?
 syscall
 test rax, rax
-jns _start_file_open_success
+jns .file_open_success
 
-    _start_failed_to_open_file:
+    .failed_to_open_file:
 mov rax, 20
 mov rbx, failed_to_open_file_msg
 call print
 jmp _end
-    _start_file_open_success:
+    .file_open_success:
 mov qword [rbp-24], rax
 mov rax, 4096
 call alloc
@@ -170,16 +170,16 @@ mov qword [rbp-40], rax
 mov qword [rbp-48], 0
 mov qword [rbp-56], 4096
 
-    _start_read_file_loop:
+    .read_file_loop:
 xor rax, rax ; read
 mov rdi, qword [rbp-24]
 mov rsi, qword [rbp-32]
 mov rdx, 4096
 syscall
 cmp rax, -1
-je _start_failed_to_open_file
+je .failed_to_open_file
 cmp rax, 0
-je _start_read_file_end
+je .read_file_end
 mov rdx, rax
 mov rax, qword [rbp-48]
 mov rbx, qword [rbp-40]
@@ -188,9 +188,9 @@ call str_concat
 mov qword [rbp-48], rax
 mov qword [rbp-40], rbx
 mov qword [rbp-56], rcx
-jmp _start_read_file_loop
+jmp .read_file_loop
 
-    _start_read_file_end:
+    .read_file_end:
 mov rax, 6 ; close
 mov rdi, qword [rbp-24]
 syscall
@@ -203,13 +203,13 @@ shl rax, 1
 add rax, rbx
 mov rax, [days_table+rax*8]
 cmp rax, 0
-jne _start_valid_function
+jne .valid_function
 mov rax, 43
 mov rbx, day_unimplemented_msg
 call print
 jmp _end
 
-    _start_valid_function:
+    .valid_function:
 mov rcx, rax
 mov rax, qword [rbp-48]
 mov rbx, qword [rbp-40]

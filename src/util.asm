@@ -36,12 +36,12 @@ mov edx, 256
 syscall
 mov rbx, rsi
 cmp rax, 0
-je input_end
+je .end
 cmp byte [rbx+rax-1], 10
-jne input_end
+jne .end
 sub rax, 1
 
-    input_end:
+    .end:
 ret
 
 ; inputs
@@ -58,7 +58,7 @@ mov rbp, rsp
 sub rsp, 24
 
 cmp rbx, rcx
-jge realloc_end
+jge .end
 
 mov qword [rbp-8], rax
 mov qword [rbp-16], rbx
@@ -67,21 +67,21 @@ call alloc
 mov rcx, qword [rbp-8]
 mov rbx, qword [rbp-16]
 
-    realloc_copy_loop:
+    .copy_loop:
 sub rbx, 1
-jc realloc_copy_end
+jc .copy_end
 mov dl, byte [rcx+rbx]
 mov byte [rax+rbx], dl
-jmp realloc_copy_loop
+jmp .copy_loop
 
-    realloc_copy_end:
+    .copy_end:
 mov qword [rbp-8], rax
 mov rax, rcx
 mov rbx, qword [rbp-16]
 call free
 mov rax, qword [rbp-8]
 
-    realloc_end:
+    .end:
 mov rsp, rbp
 pop rbp
 ret
@@ -104,12 +104,12 @@ mov r8, -1
 xor r9, r9
 syscall
 cmp rax, -1
-jne alloc_end
+jne .end
 mov rax, 19
 mov rbx, alloc_failure_msg
 call print
 call _end
-    alloc_end:
+    .end:
 ret
 
 ; inputs
@@ -125,12 +125,12 @@ mov rsi, rbx
 mov rax, 11 ; munmap
 syscall
 cmp rax, 0
-je free_end
+je .end
 mov rax, 21
 mov rbx, free_failure_msg
 call print
 call _end
-    free_end:
+    .end:
 ret
 
 section .data

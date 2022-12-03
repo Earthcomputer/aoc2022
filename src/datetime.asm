@@ -33,17 +33,17 @@ mov rcx, 146097 ; days in 400 years
 cqo
 idiv rcx
 cmp rdx, 0
-jge positive_modulus
+jge .positive_modulus
 add rdx, 146097 ; days in 400 years
-    positive_modulus:
+    .positive_modulus:
 mov rax, rdx
 xor rdx, rdx
 mov rcx, 36524 ; days in normal century
 div rcx
 cmp rax, 4
-jne non_fifth_century
+jne .non_fifth_century
 mov rdx, 36524
-    non_fifth_century:
+    .non_fifth_century:
 mov rax, rdx
 xor rdx, rdx
 mov rcx, 1461 ; days in 4 years (with leap year)
@@ -53,9 +53,9 @@ xor rdx, rdx
 mov rcx, 365 ; days in non-leap year
 div rcx
 cmp rax, 4
-jne non_fifth_year
+jne .non_fifth_year
 mov rdx, 365
-    non_fifth_year:
+    .non_fifth_year:
 xor rax, rax
 mov al, byte [day_in_month+rdx]
 ret

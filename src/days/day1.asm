@@ -31,37 +31,37 @@ xor r11, r11 ; current sum
 xor r13, r13 ; second max sum
 xor r14, r14 ; third max sum
 
-    day1_loop:
+    .loop:
 sub r8, 1
-jc day1_loop_end
+jc .loop_end
 mov rax, qword [r9]
 cmp rax, 0
-je day1_empty_line
+je .empty_line
 mov rbx, qword [r9+8]
 call parse_int
 cmp rax, 0
-je day1_valid_number
+je .valid_number
 mov rax, 15
 mov rbx, invalid_number_msg
 call _end
-    day1_valid_number:
+    .valid_number:
 add r11, rbx
-jmp day1_loop_inc
-    day1_empty_line:
+jmp .loop_inc
+    .empty_line:
 call triple_compare
 xor r11, r11
-    day1_loop_inc:
+    .loop_inc:
 add r9, 16
-jmp day1_loop
+jmp .loop
 
-    day1_loop_end:
+    .loop_end:
 call triple_compare
 mov rax, r10
 cmp r12, 0
-je day1_pt1
+je .pt1
 add rax, r13
 add rax, r14
-    day1_pt1:
+    .pt1:
 call to_string
 mov dl, 10
 call str_append
@@ -78,17 +78,17 @@ ret
 ;  clobbers r11
 triple_compare:
 cmp r11, r10
-jle triple_compare_fail1
+jle .fail1
 xchg r10, r11
-    triple_compare_fail1:
+    .fail1:
 cmp r11, r13
-jle triple_compare_fail2
+jle .fail2
 xchg r13, r11
-    triple_compare_fail2:
+    .fail2:
 cmp r11, r14
-jle triple_compare_fail3
+jle .fail3
 mov r14, r11
-    triple_compare_fail3:
+    .fail3:
 ret
 
 section .data

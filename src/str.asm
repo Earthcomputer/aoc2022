@@ -25,13 +25,13 @@ xor rcx, rcx ; result
 mov rdx, 1 ; has not seen any digit
 mov rdi, 1 ; multiplier
 
-    parse_int_loop:
+    .loop:
 sub rax, 1
-jc parse_int_end_loop
+jc .end_loop
 cmp byte [rbx+rax], '0'
-jl parse_int_not_digit
+jl .not_digit
 cmp byte [rbx+rax], '9'
-jg parse_int_not_digit
+jg .not_digit
 xor rsi, rsi
 mov sil, byte [rbx+rax]
 sub rsi, '0'
@@ -39,26 +39,26 @@ imul rsi, rdi
 add rcx, rsi
 imul rdi, 10
 xor rdx, rdx
-jmp parse_int_loop
+jmp .loop
 
-    parse_int_not_digit:
+    .not_digit:
 cmp rax, 0
-jne parse_int_error
+jne .error
 cmp byte [rbx], '+'
-je parse_int_end_loop
+je .end_loop
 cmp byte [rbx], '-'
-jne parse_int_error
+jne .error
 neg rcx
 
-    parse_int_end_loop:
+    .end_loop:
 mov rax, rdx
 mov rbx, rcx
-jmp parse_int_end
+jmp .end
 
-    parse_int_error:
+    .error:
 mov rax, 1
 
-    parse_int_end:
+    .end:
 ret
 
 ; inputs
@@ -82,17 +82,17 @@ mov rax, qword [rbp-8]
 
 xor rsi, rsi ; string length
 
-    to_string_length_loop:
+    .length_loop:
 xor rdx, rdx
 mov rdi, 10
 div rdi
 add rsi, 1
 cmp rax, 0
-jne to_string_length_loop
+jne .length_loop
 
 mov rcx, rsi ; index
 mov rax, qword [rbp-8]
-    to_string_loop:
+    .loop:
 sub rcx, 1
 xor rdx, rdx
 mov rdi, 10
@@ -100,11 +100,11 @@ div rdi
 add rdx, '0'
 mov byte [rbx+rcx], dl
 cmp rax, 0
-jne to_string_loop
+jne .loop
 
 mov rax, rsi
 
-    to_string_end:
+    .end:
 mov rcx, 20
 
 mov rsp, rbp
@@ -141,14 +141,14 @@ add rax, qword [rbp-8]
 mov rdx, qword [rbp-16]
 mov rcx, qword [rbp-24]
 
-    str_concat_copy_loop:
+    .copy_loop:
 sub rdx, 1
-jc str_concat_copy_end
+jc .copy_end
 mov sil, byte [rcx+rdx]
 mov byte [rax+rdx], sil
-jmp str_concat_copy_loop
+jmp .copy_loop
 
-    str_concat_copy_end:
+    .copy_end:
 mov rax, qword [rbp-8]
 add rax, qword [rbp-16]
 mov rcx, rax
@@ -198,13 +198,13 @@ call alloc
 mov rbx, qword [rbp-8]
 mov rcx, qword [rbp-16]
 
-    str_to_owned_loop:
+    .loop:
 sub rbx, 1
-jc str_to_owned_end
+jc .end
 mov dl, byte [rcx+rbx]
 mov byte [rax+rbx], dl
-jmp str_to_owned_loop
-    str_to_owned_end:
+jmp .loop
+    .end:
 mov rsp, rbp
 pop rbp
 ret
@@ -230,17 +230,17 @@ mov qword [rbp-16], rbx
 mov rdx, 1 ; number of parts
 xor rsi, rsi ; index
 
-    str_split_part_count_loop:
+    .part_count_loop:
 cmp rsi, rax
-jge str_split_part_count_end
+jge .part_count_end
 cmp byte [rbx+rsi], cl
-jne str_split_part_count_inc
+jne .part_count_inc
 add rdx, 1
-    str_split_part_count_inc:
+    .part_count_inc:
 add rsi, 1
-jmp str_split_part_count_loop
+jmp .part_count_loop
 
-    str_split_part_count_end:
+    .part_count_end:
 mov qword [rbp-32], rdx
 mov rax, rdx
 shl rax, 4
@@ -254,11 +254,11 @@ mov rax, qword [rbp-8] ; length
 mov rdi, qword [rbp-16] ; string
 mov cl, byte [rbp-24] ; split on
 
-    str_split_loop:
+    .loop:
 cmp rsi, rax
-jge str_split_loop_end
+jge .loop_end
 cmp byte [rdi+rsi], cl
-jne str_split_loop_inc
+jne .loop_inc
 mov r9, rsi
 sub r9, r10
 mov qword [rbx+8*rdx], r9
@@ -269,11 +269,11 @@ mov qword [rbx+8*rdx], r9
 add rdx, 1
 mov r10, rsi
 add r10, 1
-    str_split_loop_inc:
+    .loop_inc:
 add rsi, 1
-jmp str_split_loop
+jmp .loop
 
-    str_split_loop_end:
+    .loop_end:
 sub rax, r10
 mov qword [rbx+8*rdx], rax
 add rdx, 1
@@ -297,24 +297,24 @@ ret
 ;  clobbers rcx
 str_equal:
 cmp rax, rcx
-je str_equal_loop
+je .loop
 xor rax, rax
-jmp str_equal_end
+jmp .end
 
-    str_equal_loop:
+    .loop:
 sub rax, 1
-jc str_equal_pass
+jc .pass
 mov cl, byte [rbx+rax]
 cmp byte [rdx+rax], cl
-je str_equal_loop
+je .loop
 
 xor rax, rax
-jmp str_equal_end
+jmp .end
 
-    str_equal_pass:
+    .pass:
 mov rax, 1
 
-    str_equal_end:
+    .end:
 ret
 
 ; inputs
@@ -325,13 +325,13 @@ ret
 ;  clobbers rbx
 c_str_length:
 mov rbx, rax ; start pointer
-jmp c_str_length_loop_cond
+jmp .loop_cond
 
-    c_str_length_loop:
+    .loop:
 add rax, 1
-    c_str_length_loop_cond:
+    .loop_cond:
 cmp byte [rax], 0
-jne c_str_length_loop
+jne .loop
 
 sub rax, rbx
 ret

@@ -14,19 +14,19 @@ mov rcx, 10
 call str_split
 xor r12, r12
 
-    pt1_loop:
+    .loop:
 sub rax, 1
-jc pt1_loop_end
+jc .loop_end
 mov rcx, qword [rbx]
 mov rdx, rcx
 and rdx, 1
 cmp rdx, 0
-je pt1_valid_input
+je .valid_input
 mov rax, 14
 mov rbx, invalid_input_msg
 call print
 call _end
-    pt1_valid_input:
+    .valid_input:
 shr rcx, 1
 mov r9, rcx
 mov rdx, qword [rbx+8]
@@ -37,12 +37,12 @@ add rdx, rcx
 call str_to_bitset
 and rsi, r8
 cmp rsi, 0
-je pt1_loop
+je .loop
 tzcnt rsi, rsi
 add r12, rsi
 add rbx, 16
-jmp pt1_loop
-    pt1_loop_end:
+jmp .loop
+    .loop_end:
 mov rax, r12
 call to_string
 mov rdx, 10
@@ -59,9 +59,9 @@ div rcx
 mul rcx
 xor r12, r12
 
-    pt2_loop:
+    .loop:
 sub rax, 3
-jc pt2_loop_end
+jc .loop_end
 mov rcx, qword [rbx]
 mov rdx, qword [rbx+8]
 call str_to_bitset
@@ -77,8 +77,8 @@ and r13, rsi
 tzcnt r13, r13
 add r12, r13
 add rbx, 48
-jmp pt2_loop
-    pt2_loop_end:
+jmp .loop
+    .loop_end:
 mov rax, r12
 call to_string
 mov rdx, 10
@@ -96,14 +96,14 @@ ret
 str_to_bitset:
 xor rsi, rsi
 xor rdi, rdi
-    str_to_bitset_loop:
+    .loop:
 sub rcx, 1
-jc str_to_bitset_loop_end
+jc .loop_end
 mov dil, byte [rdx+rcx]
 cmp dil, 'a'
-jl str_to_bitset_uppercase_test
+jl .uppercase_test
 cmp dil, 'z'
-jg invalid_input
+jg .invalid_input
 sub dil, 96
 mov r10, 1
 mov r11, rcx
@@ -111,13 +111,13 @@ mov cl, dil
 shl r10, cl
 mov rcx, r11
 or rsi, r10
-jmp str_to_bitset_loop
+jmp .loop
 
-    str_to_bitset_uppercase_test:
+    .uppercase_test:
 cmp dil, 'A'
-jl invalid_input
+jl .invalid_input
 cmp dil, 'Z'
-jg invalid_input
+jg .invalid_input
 sub dil, 38
 mov r10, 1
 mov r11, rcx
@@ -125,15 +125,15 @@ mov cl, dil
 shl r10, cl
 mov rcx, r11
 or rsi, r10
-jmp str_to_bitset_loop
+jmp .loop
 
-    invalid_input:
+    .invalid_input:
 mov rax, 14
 mov rbx, invalid_input_msg
 call print
 call _end
 
-    str_to_bitset_loop_end:
+    .loop_end:
 ret
 
 section .data
