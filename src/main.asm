@@ -1,5 +1,5 @@
 global _start
-global _end
+global exit
 
 extern alloc
 extern c_str_length
@@ -106,7 +106,7 @@ jmp .day_msg_success
 mov rax, 12
 mov rbx, invalid_day_msg
 call print
-jmp _end
+call exit
 
     .day_msg_success:
 mov qword [rbp-8], rbx
@@ -127,7 +127,7 @@ je .part_msg_success
 mov rax, 20
 mov rbx, invalid_part_msg
 call print
-jmp _end
+call exit
 
     .part_msg_success:
 mov qword [rbp-16], rbx
@@ -158,7 +158,7 @@ jns .file_open_success
 mov rax, 20
 mov rbx, failed_to_open_file_msg
 call print
-jmp _end
+call exit
     .file_open_success:
 mov qword [rbp-24], rax
 mov rax, 4096
@@ -207,18 +207,21 @@ jne .valid_function
 mov rax, 43
 mov rbx, day_unimplemented_msg
 call print
-jmp _end
+call exit
 
     .valid_function:
 mov rcx, rax
 mov rax, qword [rbp-48]
 mov rbx, qword [rbp-40]
 call rcx
+call exit
+ret
 
-_end:
+exit:
 mov rax, 60 ; exit
 xor rdi, rdi
 syscall
+ret
 
 section .data
 

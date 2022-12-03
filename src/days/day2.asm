@@ -1,4 +1,4 @@
-extern _end
+extern exit
 extern print
 extern str_append
 extern str_split
@@ -37,7 +37,7 @@ je .input_valid
 mov rax, 21
 mov rbx, invalid_input_msg
 call print
-call _end
+call exit
     .input_valid:
 mov rcx, qword [rbx+8]
 xor rdx, rdx

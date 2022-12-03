@@ -1,4 +1,4 @@
-extern _end
+extern exit
 
 global alloc
 global free
@@ -108,7 +108,7 @@ jne .end
 mov rax, 19
 mov rbx, alloc_failure_msg
 call print
-call _end
+call exit
     .end:
 ret
 
@@ -129,7 +129,7 @@ je .end
 mov rax, 21
 mov rbx, free_failure_msg
 call print
-call _end
+call exit
     .end:
 ret
 

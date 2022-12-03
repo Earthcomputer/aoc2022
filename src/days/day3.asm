@@ -1,4 +1,4 @@
-extern _end
+extern exit
 extern print
 extern str_append
 extern str_split
@@ -25,7 +25,7 @@ je .valid_input
 mov rax, 14
 mov rbx, invalid_input_msg
 call print
-call _end
+call exit
     .valid_input:
 shr rcx, 1
 mov r9, rcx
@@ -131,7 +131,7 @@ jmp .loop
 mov rax, 14
 mov rbx, invalid_input_msg
 call print
-call _end
+call exit
 
     .loop_end:
 ret
