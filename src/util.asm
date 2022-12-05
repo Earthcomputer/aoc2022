@@ -50,18 +50,20 @@ ret
 ;  rcx: the size to reallocate to
 ; outputs
 ;  rax: the address of the allocation
+;  rbx: the resulting size of the allocation
 ; side effects:
 ;  clobbers rcx, rsi, rdi, rdx, r10, r8, r9
 realloc:
 push rbp
 mov rbp, rsp
-sub rsp, 24
+sub rsp, 32
 
 cmp rbx, rcx
 jge .end
 
 mov qword [rbp-8], rax
 mov qword [rbp-16], rbx
+mov qword [rbp-24], rcx
 mov rax, rcx
 call alloc
 mov rcx, qword [rbp-8]
@@ -80,6 +82,7 @@ mov rax, rcx
 mov rbx, qword [rbp-16]
 call free
 mov rax, qword [rbp-8]
+mov rbx, qword [rbp-24]
 
     .end:
 mov rsp, rbp
@@ -95,6 +98,8 @@ ret
 alloc:
 add rax, 0hfff
 and rax, 0hfffffffffffff000
+cmp rax, 0
+je .end
 mov rsi, rax
 mov rax, 9 ; mmap
 xor rdi, rdi
@@ -120,6 +125,8 @@ ret
 free:
 add rbx, 0hfff
 and rbx, 0hfffffffffffff000
+cmp rbx, 0
+je .end
 mov rdi, rax
 mov rsi, rbx
 mov rax, 11 ; munmap
