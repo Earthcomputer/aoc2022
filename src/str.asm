@@ -4,6 +4,7 @@ global str_append
 global str_concat
 global str_equal
 global str_split
+global str_starts_with
 global str_to_owned
 global to_string
 
@@ -314,6 +315,26 @@ jmp .end
     .pass:
 mov rax, 1
 
+    .end:
+ret
+
+; inputs
+;  rax: main string length
+;  rbx: main string
+;  rcx: sub string length
+;  rdx: sub string
+; outputs:
+;  rax: 1 if main starts with sub, 0 otherwise
+; side effects
+;  clobbers rcx
+str_starts_with:
+cmp rcx, rax
+jg .false
+mov rax, rcx
+call str_equal
+jmp .end
+    .false:
+xor rax, rax
     .end:
 ret
 
