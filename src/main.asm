@@ -29,6 +29,8 @@ extern day6_1
 extern day6_2
 extern day7_1
 extern day7_2
+extern day8_1
+extern day8_2
 
 section .text
 
@@ -281,4 +283,6 @@ dq day6_1
 dq day6_2
 dq day7_1
 dq day7_2
-dq 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+dq day8_1
+dq day8_2
+dq 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
