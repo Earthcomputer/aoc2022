@@ -7,6 +7,7 @@ global str_split
 global str_starts_with
 global str_to_owned
 global to_string
+global to_string_signed
 
 extern alloc
 extern realloc
@@ -110,6 +111,35 @@ mov rcx, 20
 
 mov rsp, rbp
 pop rbp
+ret
+
+; inputs
+;  rax: the number to convert to a string
+; outputs
+;  rax: the length of the string
+;  rbx: the string
+;  rcx: the capacity
+; side effects:
+;  clobbers rdx, rsi, rdi, r10, r8, r9
+to_string_signed:
+cmp rax, 0
+jl .negative
+call to_string
+jmp .end
+    .negative:
+neg rax
+call to_string
+mov rdx, rax
+    .shift:
+sub rdx, 1
+jc .shift_end
+mov sil, byte [rbx+rdx]
+mov byte [rbx+rdx+1], sil
+jmp .shift
+    .shift_end:
+mov byte [rbx], '-'
+add rax, 1
+    .end:
 ret
 
 ; inputs
