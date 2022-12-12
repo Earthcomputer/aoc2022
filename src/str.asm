@@ -4,6 +4,7 @@ global str_append
 global str_concat
 global str_equal
 global str_split
+global str_split_str
 global str_starts_with
 global str_to_owned
 global to_string
@@ -315,6 +316,105 @@ mov rax, qword [rbp-32]
 
 mov rsp, rbp
 pop rbp
+ret
+
+; inputs
+;  rax: length of string
+;  rbx: string to split
+;  rcx: length of separator
+;  rdx: separator
+; outputs
+;  rax: number of parts
+;  rbx: pointer to vector of parts. The vector contains string lengths and string pointers. The length of part i is
+;       [rbx+i*16], and the string at part i is rbx+8+i*16.
+; side effects
+;  clobbers rcx, rsi, rdi, rdx, r10, r8, r9, r12, r13, r14, r15
+str_split_str:
+%define input_len qword [rbp-8]
+%define input qword [rbp-16]
+%define sep_len qword [rbp-24]
+%define sep qword [rbp-32]
+%define part_count qword [rbp-40]
+push rbp
+mov rbp, rsp
+sub rsp, 48
+mov input_len, rax
+mov input, rbx
+mov sep_len, rcx
+mov sep, rdx
+
+mov r8, rax ; substr len
+mov r9, rbx ; substr
+mov r10, 1 ; part count
+    .count_loop:
+cmp r8, sep_len
+jl .count_loop_end
+mov rax, r8
+mov rbx, r9
+mov rcx, sep_len
+call str_starts_with
+cmp rax, 0
+je .count_not_separator
+sub r8, sep_len
+add r9, sep_len
+add r10, 1
+jmp .count_loop
+    .count_not_separator:
+sub r8, 1
+add r9, 1
+jmp .count_loop
+    .count_loop_end:
+
+mov part_count, r10
+mov rax, r10
+shl rax, 4
+call alloc
+mov r15, rax
+mov r14, rax
+mov r13, input
+mov r12, r13
+add r12, input_len
+
+    .split_loop:
+mov rax, input_len
+cmp rax, sep_len
+jl .split_loop_end
+mov rax, input_len
+mov rbx, input
+mov rcx, sep_len
+mov rdx, sep
+call str_starts_with
+cmp rax, 0
+je .split_not_separator
+mov qword [r15], rbx
+sub qword [r15], r13
+mov qword [r15+8], r13
+add r15, 16
+mov rax, sep_len
+add input, rax
+sub input_len, rax
+mov r13, input
+jmp .split_loop
+    .split_not_separator:
+sub input_len, 1
+add input, 1
+jmp .split_loop
+    .split_loop_end:
+
+mov qword [r15], r12
+sub qword [r15], r13
+mov qword [r15+8], r13
+
+mov rax, part_count
+mov rbx, r14
+
+mov rsp, rbp
+pop rbp
+%undef part_count
+%undef sep
+%undef sep_len
+%undef input
+%undef input_len
 ret
 
 ; inputs
