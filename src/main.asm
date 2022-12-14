@@ -41,6 +41,8 @@ extern day12_1
 extern day12_2
 extern day13_1
 extern day13_2
+extern day14_1
+extern day14_2
 
 section .text
 
@@ -305,4 +307,6 @@ dq day12_1
 dq day12_2
 dq day13_1
 dq day13_2
-dq 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+dq day14_1
+dq day14_2
+dq 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
