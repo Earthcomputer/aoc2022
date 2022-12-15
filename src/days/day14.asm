@@ -1,5 +1,7 @@
 extern alloc
 extern exit
+extern max_int
+extern min_int
 extern parse_int
 extern print
 extern str_append
@@ -400,11 +402,6 @@ pop rbp
 ret
 
 section .data
-
-min_int:
-dq 0h8000000000000000
-max_int:
-dq 0h7fffffffffffffff
 
 syntax_error_msg:
 db "Syntax error", 10

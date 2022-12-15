@@ -43,6 +43,8 @@ extern day13_1
 extern day13_2
 extern day14_1
 extern day14_2
+extern day15_1
+extern day15_2
 
 section .text
 
@@ -309,4 +311,6 @@ dq day13_1
 dq day13_2
 dq day14_1
 dq day14_2
-dq 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+dq day15_1
+dq day15_2
+dq 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

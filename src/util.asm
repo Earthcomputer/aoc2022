@@ -3,6 +3,8 @@ extern exit
 global alloc
 global free
 global input
+global max_int
+global min_int
 global print
 global realloc
 
@@ -147,3 +149,8 @@ db "Allocation failure", 10
 
 free_failure_msg:
 db "Deallocation failure", 10
+
+min_int:
+dq 0x8000000000000000
+max_int:
+dq 0x7fffffffffffffff
